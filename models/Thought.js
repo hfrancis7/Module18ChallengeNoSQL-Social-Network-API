@@ -2,6 +2,8 @@ const { Schema, model } = require('mongoose');
 const reactionSchema = require('./Reaction');
 var validate = require('mongoose-validator');
 
+//TODO: Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
+
 var thoughtValidator = [
     validate({
       validator: 'isLength',
@@ -18,14 +20,16 @@ const thoughtSchema = new Schema(
             trim: true,
             validate: thoughtValidator,
         },
-        email: {
+        createdAt: {
+            type: Date,
+            default: Date.now(),
+            //use a getter method to format the timestamp on query
+        },
+        username: {
             type: String,
             required: true,
-            unique: true,
-            match: /.+\@.+\..+/,
         },
-        thoughts: [thoughtSchema],
-        friends: [this]
+        reactions: [reactionSchema]
     },
     {
         toJSON: {
