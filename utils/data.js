@@ -147,12 +147,12 @@ const thoughts = [
 
 // Gets a random username
 const getArrayOfNames = () => {
-  return nameArr;
+  return usernames;
 };
 
-// Gets array of messages
-const getMessages = () => {
-  return messages;
+// Gets array of thoughts
+const getThoughts = () => {
+  return thoughts;
 };
 
 // Gets a random reaction
@@ -161,4 +161,4 @@ const getReaction = () => {
 };
 
 // Export the functions for use in seed.js
-module.exports = { getArrayOfNames, getMessages, getReaction };
+module.exports = { getArrayOfNames, getThoughts, getReaction };

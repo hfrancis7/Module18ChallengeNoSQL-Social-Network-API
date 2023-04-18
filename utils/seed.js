@@ -1,6 +1,6 @@
 const connection = require("../config/connection");
 const { User, Thought } = require("../models");
-const { getArrayOfNames, getMessages, getReaction } = require("./data");
+const { getArrayOfNames, getThoughts, getReaction } = require("./data");
 
 connection.on("error", (err) => err);
 
@@ -16,12 +16,10 @@ connection.once("open", async () => {
   // Create empty array to hold the users and thoughts
   const users = [];
 
-  // Loop 20 times -- add users to the users array
+  // Loop through all names -- add users to the users array
   let arrayOfNames = getArrayOfNames();
-  for (let i = 0; i < 20; i++) {
-    const username =
-      arrayOfNames.pop(Math.floor(Math.random() * arrayOfNames.length)) +
-      arrayOfNames.pop(Math.floor(Math.random() * arrayOfNames.length));
+  for (let i = 0; i < arrayOfNames.length; i++) {
+    const username = arrayOfNames.pop(Math.floor(Math.random() * arrayOfNames.length))
     const email = `${username}@gmail.com`;
     const thoughts = [];
     const friends = [];
@@ -38,8 +36,8 @@ connection.once("open", async () => {
   await User.collection.insertMany(users).catch((err)=>{console.log(err)});
 
   // Add thoughts to thoughts array
-  const messages = getMessages();
-  for (let i = 0; i < 20; i++) {
+  const messages = getThoughts();
+  for (let i = 0; i < messages.length; i++) {
     // Get a random user
     let result = await User.aggregate([{ $sample: { size: 1 } }]);
     const user = result[0];
@@ -50,17 +48,22 @@ connection.once("open", async () => {
     const username = user.username;
 
     // Create reaction fields values
-    const reactionBody = getReaction();
-    result = await User.aggregate([
-      { $match: { _id: { $ne: user._id } } },
-      { $sample: { size: 1 } },
-    ]);
-    const reactionUsername = result[0];
-    const reactions = [
-      { reactionBody: reactionBody, username: reactionUsername.username },
-    ];
-    // console.log(reactions);
-
+    const reactions = [];
+    let reactionUsername;
+    const reactionAmt = Math.floor(Math.random() * 20) + 1;
+    for(let i = 0; i < reactionAmt; i++){
+      const reactionBody = getReaction();
+      result = await User.aggregate([
+        { $match: { _id: { $ne: user._id } } },
+        { $sample: { size: 1 } },
+      ]);
+      reactionUsername = result[0];
+      reactions.push(
+        { reactionBody: reactionBody, username: reactionUsername.username },
+      );
+      // console.log(reactions);
+    }
+    
     // Insert new Thought
     const thought = {
       thoughtText,
