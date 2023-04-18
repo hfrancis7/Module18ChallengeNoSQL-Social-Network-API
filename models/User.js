@@ -27,6 +27,6 @@ const userSchema = new Schema(
     }
 );
 
-const Student = model('student', studentSchema);
+const User = model('user', userSchema);
 
-module.exports = Student;
+module.exports = User;
