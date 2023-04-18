@@ -67,8 +67,7 @@ module.exports = {
         {$push: { reactions: {
           reactionBody: req.body.reactionBody,
           username: user.username,
-        },
-      },},)
+        },},},)
     },)
     .then((thought) =>{
       !thought
@@ -78,8 +77,24 @@ module.exports = {
     .catch((err) => {
       res.status(500).json({ message: "Reaction failed to add", error: err.message,});
     });
-  }
-
+  },
 
   //Remove Reaction
+  removeReaction(req, res) {
+    Thought.findOneAndUpdate(
+      {_id: req.params.thoughtId},
+      {new: true},
+      {$pull: {reactions: {
+        reactionBody: req.body.reactionBody,
+        username: user.username,
+      },},},)
+      .then((thought) => {
+        !thought
+          ? res.status(404).json({ message: 'No thought with this id!' })
+          : res.status(201).json({message: 'Deleted reaction', thought})
+      })
+      .catch((err) => {
+        res.status(500).json({ message: "Reaction failed to delete", error: err.message,});
+      });
+  }
 };
