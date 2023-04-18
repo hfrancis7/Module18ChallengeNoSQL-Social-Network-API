@@ -1,20 +1,11 @@
-const { Schema, model, ObjectId } = require('mongoose');
+const { Schema, model } = require('mongoose');
 const reactionSchema = require('./Reaction');
-var validate = require('mongoose-validator');
-
-var thoughtValidator = [
-    validate({
-      validator: 'isLength',
-      arguments: [1, 280],
-      message: 'Thought should be between 1 and 280 characters'
-    }),
-  ];
 
 const reactionSchema = new Schema(
     {
         readtionId: {
-            type: ObjectId,
-            default: new ObjectId(),
+            type: Schema.Types.ObjectId,
+            default: () => new mongoose.Types.ObjectId(),
         },
         reactionBody: {
             type: String,
@@ -28,7 +19,7 @@ const reactionSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now(),
-            //use getter method to format the timestamp on query
+            get: date => new Date(date).toLocaleString(),
         }
     },
     {
@@ -38,6 +29,6 @@ const reactionSchema = new Schema(
     }
 );
 
-const Thought = model('thought', thoughtSchema);
+const Reaction = model('reaction', reactionSchema);
 
-module.exports = Thought;
+module.exports = Reaction;

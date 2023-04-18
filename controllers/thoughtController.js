@@ -55,7 +55,7 @@ module.exports = {
 
   //Add Reaction
   addReaction(req,res){
-    User.findById(req.body,userId)
+    User.findById(req.body.userId)
     .then((user) => {
       if(!user) {
         return res.status(404).json({message: "No user with this id!"});
